@@ -3,8 +3,11 @@
 (see https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d for quick overview)
 
 This projects consists of two loosly related sub-projects:
-* Circles UBI-Trustmonitor
+* Circles UBI-Trustmonitor (uses)
+  * Monitor the `Hub` Smart Contract for `Trust` Events and store them.
 * Circles UBI-Trustgraph-Neo4j
+  * Store the `truster`, `trustee`, `blockNumber` and `amount` in a running Neo4j database.
+  * Offer a transitive payment (shortestPath) calculation API 
 
 The Trustmonitor reads all `Trust` events of the `Hub` Smart Contract and calls an (external) service with the retrieved data.
 
@@ -12,16 +15,21 @@ The Trustgraph accepts incoming requests with `truster`, `trustee`, `blockNumber
 
 ## Usage
 
-When starting the application, the Monitor listens from Block `start.block` in `application.properties`. Though it's possible to start with 12529458, which is the deployment blocknumber of the `Hub` Smart Contract in the xDai Chain, the processing would then take some hours to catch up with the current state.  
-Therefore, it is much better to import the provided file `trustgraph_14487468.csv` into Neo4j directly, which takes ~30 secs and then set the `start.block` to 14487468.
+### Setup
 
-### Importing the Bootstrap Data CSV into Neo4j
-
-* Create a new Neo4j database, use settings `dbms.memory.heap.initial_size=2G` and `dbms.memory.heap.max_size=4G`, set password to 123654789 or change password in `application.properties`
-
-* Use the Cypher statements from this gist to import the data, copy the CSV file to the correct import folder before.
+* Install [Neo4j](https://neo4j.com/) 
+* Create a database with user `neo4j` and password `123654789`, listening on default port/protocol `bolt://localhost:7687`
+ * Optionally increase Heap size use settings `dbms.memory.heap.initial_size=2G` and `dbms.memory.heap.max_size=4G`
+* Copy `trustgraph_*.csv` from this repo root to the import folder.
 
 ![](docs/img/neo4j.png)
+
+* Use the Cypher statements from [this gist](https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d) for commands to import the data from the CSV and set indexes.
+
+### Operation
+
+When starting the application, the Monitor listens from Block `start.block` in `application.properties`. Though it's possible to start with 12529458, which is the deployment blocknumber of the `Hub` Smart Contract in the xDai Chain, the processing would then take some hours to catch up with the current state.  
+Therefore, it is much better to import the provided file `trustgraph_14487468.csv` into Neo4j directly, which takes ~30 secs and then set the `start.block` to 14487468.
 
 ## Circles UBI-Trustmonitor
 
