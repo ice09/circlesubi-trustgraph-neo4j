@@ -28,6 +28,15 @@ The Trustgraph accepts incoming requests with `truster`, `trustee`, `blockNumber
 
 ### Operation
 
+#### Using Docker
+
+* Execute `docker run -d -p 8889:8889 --name circlesubi-trustgraph ice0nine/circlesubi-trustgraph:latest`
+
+#### Using IDE (IntelliJ)
+
+* Change `host.docker.internal` to `localhost` in `application.properties`
+* Build with Maven and start `UserTrustGraphApplication`
+
 When starting the application, the Monitor listens from Block `start.block` in `application.properties`. Though it's possible to start with 12529458, which is the deployment blocknumber of the `Hub` Smart Contract in the xDai Chain, the processing would then take some hours to catch up with the current state.  
 Therefore, it is much better to import the provided file `trustgraph_14487468.csv` into Neo4j directly, which takes ~30 secs and then set the `start.block` to 14487468.
 
@@ -38,6 +47,11 @@ After starting the application, a scheduler will run which monitors the Events o
 ## Circles UBI-Trustgraph Neo4j
 
 The Trustgraph service provides an API which is described at http://localhost:8889/swagger-ui.html
+
+The most interesting API call offered is the calculation of the shortest path (with transitive transfers) between two users:
+
+`curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c" -H "accept: */*"`
+
 
 
 
