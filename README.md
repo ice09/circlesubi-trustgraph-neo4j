@@ -1,6 +1,10 @@
 ## Circles UBI Trustgraph Visualization and Shortest Path Calculation with Neo4j
 
-(see https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d for quick overview)
+_Note: For a non-Neo4j version of Circles UBI-Trustgraph exploring, go to https://chriseth.github.io/pathfinder/_
+
+You can jump to the instructions for Neo4j directly here: https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d
+
+## Project Structure 
 
 This projects consists of two loosly related sub-projects:
 * Circles UBI-Trustmonitor
@@ -18,6 +22,7 @@ The Trustgraph accepts incoming requests with `truster`, `trustee`, `blockNumber
 ### Setup
 
 * Install [Neo4j](https://neo4j.com/) 
+  * For Neo4j Docker Setup see section below
 * Create a database with user `neo4j` and password `123654789`, listening on default port/protocol `bolt://localhost:7687`
  * Optionally increase Heap size use settings `dbms.memory.heap.initial_size=2G` and `dbms.memory.heap.max_size=4G`
 * Copy `trustgraph_*.csv` from this repo root to the import folder.
@@ -26,11 +31,12 @@ The Trustgraph accepts incoming requests with `truster`, `trustee`, `blockNumber
 
 * Use the Cypher statements from [this gist](https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d) for commands to import the data from the CSV and set indexes.
 
-### Operation
+### Operations
 
 #### Using Docker
 
 * Execute `docker run -d -p 8889:8889 --name circlesubi-trustgraph ice0nine/circlesubi-trustgraph:latest`
+  * for external configuration `docker run -d -p 8889:8889 -e SPRING_CONFIG_LOCATION=/config/ -v YOUR_HOST_DIR_WITH_application.properties:/config --name circlesubi-trustgraph ice0nine/circlesubi-trustgraph:latest`
 
 #### Using IDE (IntelliJ)
 
@@ -46,12 +52,26 @@ After starting the application, a scheduler will run which monitors the Events o
 
 ## Circles UBI-Trustgraph Neo4j
 
-The Trustgraph service provides an API which is described at http://localhost:8889/swagger-ui.html
+The Trustgraph service provides an API which is described at http://127.0.0.1:8889/swagger-ui.html
 
 The most interesting API call offered is the calculation of the shortest path (with transitive transfers) between two users:
 
 `curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c/50" -H "accept: */*"`
 
+### Neo4j Docker Setup
 
+(see https://neo4j.com/developer/docker-run-neo4j/)
 
+```
+docker run \
+    --name circlesubi-neo4j \
+    -p7474:7474 -p7687:7687 \
+    -d \
+    -v $HOME/neo4j/data:/data \
+    -v $HOME/neo4j/logs:/logs \
+    -v $HOME/neo4j/import:/var/lib/neo4j/import \
+    -v $HOME/neo4j/plugins:/plugins \
+    --env NEO4J_AUTH=neo4j/123654789 \
+    neo4j:latest
+```
 
