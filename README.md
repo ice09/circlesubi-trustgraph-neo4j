@@ -3,7 +3,7 @@
 (see https://gist.github.com/ice09/87509a1ecafd9ddd73e02c6ebc5b005d for quick overview)
 
 This projects consists of two loosly related sub-projects:
-* Circles UBI-Trustmonitor (uses)
+* Circles UBI-Trustmonitor
   * Monitor the `Hub` Smart Contract for `Trust` Events and store them.
 * Circles UBI-Trustgraph-Neo4j
   * Store the `truster`, `trustee`, `blockNumber` and `amount` in a running Neo4j database.
@@ -50,7 +50,7 @@ The Trustgraph service provides an API which is described at http://localhost:88
 
 The most interesting API call offered is the calculation of the shortest path (with transitive transfers) between two users:
 
-`curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c" -H "accept: */*"`
+`curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c/50" -H "accept: */*"`
 
 
 

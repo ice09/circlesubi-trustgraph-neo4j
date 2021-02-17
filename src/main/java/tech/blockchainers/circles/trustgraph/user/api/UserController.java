@@ -28,28 +28,21 @@ class UserController {
 		this.userService = userService;
 	}
 
-	/*
-	@GetMapping("/user/{address}")
-	public MovieDetailsDto findByTitle(@PathVariable("title") String title) {
-		return userService.fetchDetailsByTitle(title);
-	}
-	*/
-
-	@GetMapping("/trust/{truster}/{trustee}")
-	List<User> search(@PathVariable("truster") String truster, @PathVariable("trustee")  String trustee) {
-		return userService.findTrustGraph(truster.toLowerCase(Locale.ROOT), trustee.toLowerCase(Locale.ROOT));
+	@GetMapping("/trust/{truster}/{trustee}/{amount}")
+	List<User> search(@PathVariable("truster") String truster, @PathVariable("trustee")  String trustee, @PathVariable("amount") BigInteger amount) {
+		return userService.findTrustGraph(truster.toLowerCase(Locale.ROOT), trustee.toLowerCase(Locale.ROOT), amount);
 	}
 
 	@PostMapping(path = "/trust/{truster}/{trustee}/{amount}/{blockNumber}")
 	public ResponseEntity<String> addTrustLine(@PathVariable("truster") String truster, @PathVariable("trustee") String trustee, @PathVariable(value = "amount") Integer amount, @PathVariable(value = "blockNumber") Integer blockNumber) {
 		userService.addTrustLine(truster, trustee, blockNumber, amount);
 		log.info("Created at {} trustline {},{}", blockNumber, truster, trustee, amount);
-		return new ResponseEntity<>("{\"message\": \"" + truster + "|" + trustee + " created.\"}", HttpStatus.CREATED);
+		return new ResponseEntity<>("{\"message\": \"" + truster + "|" + trustee + "|" + amount + " created.\"}", HttpStatus.CREATED);
 	}
 
 	@GetMapping("/graph")
 	public Map<String, List<Object>> getGraph() {
-		return userService.fetchMovieGraph();
+		return userService.fetchTrustGraph();
 	}
 
 }

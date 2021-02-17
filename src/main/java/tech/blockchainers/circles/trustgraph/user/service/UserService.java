@@ -39,17 +39,16 @@ public class UserService {
 		this.databaseSelectionProvider = databaseSelectionProvider;
 	}
 
-	public List<User> findTrustGraph(String truster, String trustee) {
-		return userRepository.findTrustGraph(truster, trustee);
+	public List<User> findTrustGraph(String truster, String trustee, BigInteger amount) {
+		return userRepository.findTrustGraph(truster, trustee, amount.intValueExact());
 	}
 
 	/**
-	 * This is an example of when you might want to use the pure driver in case you have no need for mapping at all, neither in the
-	 * form of the way the {@link org.springframework.data.neo4j.core.Neo4jClient} allows and not in form of entities.
+	 * This is an example of the original Movie SDN example of Neo4j.
 	 *
 	 * @return A representation D3.js can handle
 	 */
-	public Map<String, List<Object>> fetchMovieGraph() {
+	public Map<String, List<Object>> fetchTrustGraph() {
 
 		var nodes = new ArrayList<>();
 		var links = new ArrayList<>();
