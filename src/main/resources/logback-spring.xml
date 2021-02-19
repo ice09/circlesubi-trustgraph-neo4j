@@ -2,7 +2,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <!-- Change to DEBUG log protocol messages -->
-    <logger name="tech" level="INFO"/>
+    <logger name="tech" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE" />

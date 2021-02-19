@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.blockchainers.circles.trustgraph.user.model.User;
+import tech.blockchainers.circles.trustgraph.user.service.EnrichmentService;
 import tech.blockchainers.circles.trustgraph.user.service.UserService;
 
 import java.math.BigInteger;
@@ -23,9 +24,11 @@ import java.util.Map;
 class UserController {
 
 	private final UserService userService;
+	private final EnrichmentService enrichmentService;
 
-	UserController(UserService userService) {
+	UserController(UserService userService, EnrichmentService enrichmentService) {
 		this.userService = userService;
+		this.enrichmentService = enrichmentService;
 	}
 
 	@GetMapping("/trust/{truster}/{trustee}/{amount}")
@@ -35,7 +38,12 @@ class UserController {
 
 	@PostMapping(path = "/trust/{truster}/{trustee}/{amount}/{blockNumber}")
 	public ResponseEntity<String> addTrustLine(@PathVariable("truster") String truster, @PathVariable("trustee") String trustee, @PathVariable(value = "amount") Integer amount, @PathVariable(value = "blockNumber") Integer blockNumber) {
-		userService.addTrustLine(truster, trustee, blockNumber, amount);
+		Data trusterDto = !enrichmentService.enrichUserAddress(truster).getData().isEmpty() ?
+				enrichmentService.enrichUserAddress(truster).getData().get(0) : Data.builder().safeAddress(truster).build();
+		Data trusteeDto = !enrichmentService.enrichUserAddress(trustee).getData().isEmpty() ?
+				enrichmentService.enrichUserAddress(trustee).getData().get(0) : Data.builder().safeAddress(trustee).build();;
+		userService.addTrustLine(trusterDto.getSafeAddress(), trusterDto.getUsername(), trusterDto.getAvatarUrl(),
+				trusteeDto.getSafeAddress(), trusteeDto.getUsername(), trusteeDto.getAvatarUrl(), blockNumber, amount);
 		log.info("Created at {} trustline {},{}", blockNumber, truster, trustee, amount);
 		return new ResponseEntity<>("{\"message\": \"" + truster + "|" + trustee + "|" + amount + " created.\"}", HttpStatus.CREATED);
 	}
