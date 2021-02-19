@@ -26,6 +26,7 @@ public class ContractEventListenerService {
     private final GraphService graphService;
     @Value("${start.block}")
     private BigInteger latestBlock;
+    private int counter;
 
     public ContractEventListenerService(Web3j httpWeb3j, Hub hub, GraphService graphService) {
         this.hub = hub;
@@ -51,7 +52,7 @@ public class ContractEventListenerService {
                         BigInteger amount = BigInteger.ZERO;
                         String truster = ethLogTopics.get(1).substring(26);
                         String trustee = ethLogTopics.get(2).substring(26);
-                        log.debug("user | canSendTo : 0x" + trustee + " | 0x" + truster);
+                        log.debug("event | user | canSendTo : " + ++counter + " | 0x" + trustee + " | 0x" + truster);
                         try {
                             amount = new BigInteger(StringUtils.trimLeadingCharacter(lastLogEntry.getData().substring(2), '0'), 16);
                         } catch (Exception ex) {

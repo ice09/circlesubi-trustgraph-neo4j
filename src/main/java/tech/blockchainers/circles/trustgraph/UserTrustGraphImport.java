@@ -1,5 +1,6 @@
 package tech.blockchainers.circles.trustgraph;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,15 +14,16 @@ import java.util.Arrays;
 
 @SpringBootApplication
 @EnableScheduling
+@Slf4j
 public class UserTrustGraphImport implements CommandLineRunner {
 
     @Autowired private ContractEventListenerService contractEventListenerService;
     @Autowired(required = false) private GraphFileExportService graphFileExportService;
     @Autowired private ConfigurableApplicationContext env;
+    static ConfigurableApplicationContext ctx;
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = SpringApplication.run(UserTrustGraphImport.class, args);
-        SpringApplication.exit(ctx, () -> 0);
+        ctx = SpringApplication.run(UserTrustGraphImport.class, args);
     }
 
     @Override
@@ -29,6 +31,7 @@ public class UserTrustGraphImport implements CommandLineRunner {
         if (Arrays.asList(env.getEnvironment().getActiveProfiles()).contains("import")) {
             contractEventListenerService.addTrustFromTrustEvent();
             graphFileExportService.close();
+            SpringApplication.exit(ctx, () -> 0);
         }
     }
 }
