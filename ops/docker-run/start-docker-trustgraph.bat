@@ -1,0 +1,1 @@
+docker run -d -p 8889:8889 -e JAVA_OPTS="-Dspring.profiles.active=monitor -Dspring.config.location=/config/" -v %cd%:/config --name circlesubi-trustgraph ice0nine/circlesubi-trustgraph:latest
