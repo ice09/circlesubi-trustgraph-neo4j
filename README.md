@@ -10,7 +10,7 @@ This projects consists of two loosly related sub-projects:
 * Circles UBI-Trustmonitor
   * Monitor the `Hub` Smart Contract for `Trust` Events and store them.
 * Circles UBI-Trustgraph-Neo4j
-  * Store the `truster`, `trustee`, `blockNumber` and `amount` in a running Neo4j database.
+  * Store the `truster` (+name, +image), `trustee` (+name, +image), `blockNumber` and `amount` in a running Neo4j database.
   * Offer a transitive payment (shortestPath) calculation API
 
 The Trustmonitor reads all `Trust` events of the `Hub` Smart Contract and calls an (external) service with the retrieved data.
