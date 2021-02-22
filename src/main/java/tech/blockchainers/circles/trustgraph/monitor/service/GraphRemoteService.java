@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-@Profile("monitoring")
+@Profile("monitor")
 public class GraphRemoteService implements GraphService {
 
     @Value("${graph.service.url}")

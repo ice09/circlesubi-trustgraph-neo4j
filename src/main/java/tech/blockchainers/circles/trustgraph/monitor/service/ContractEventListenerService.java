@@ -13,6 +13,7 @@ import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.Log;
 import tech.blockchainers.Hub;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
@@ -32,6 +33,11 @@ public class ContractEventListenerService {
         this.hub = hub;
         this.httpWeb3j = httpWeb3j;
         this.graphService = graphService;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.latestBlock = this.latestBlock.subtract(BigInteger.ONE);
     }
 
     public void addTrustFromTrustEvent() throws IOException {
@@ -61,7 +67,7 @@ public class ContractEventListenerService {
                         graphService.addTrustGraph("0x" + truster, "0x" + trustee, amount, lastLogEntry.getBlockNumber());
                     }
                 } else {
-                    log.warn("Logs are null.");
+                    log.debug("No events found.");
                 }
                 index = index.add(BigInteger.valueOf(10000));
                 log.debug("Set new index {}", index);

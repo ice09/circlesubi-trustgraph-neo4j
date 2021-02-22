@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-@Profile("monitoring")
+@Profile("monitor")
 // This component is not necessary for a "notify-all" (pub/sub) twitter messages
 // For notification of individual users instead of "#"-tweets, this would have to listen to some
 // middleware like a smart contract, eg. listening for "trust" calls on contracts or to transactions

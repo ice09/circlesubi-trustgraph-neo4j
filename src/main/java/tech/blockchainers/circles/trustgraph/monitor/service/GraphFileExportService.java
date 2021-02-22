@@ -1,5 +1,6 @@
 package tech.blockchainers.circles.trustgraph.monitor.service;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Slf4j
 @Service
 @Profile("import")
 public class GraphFileExportService implements GraphService {
 
-    private final File output = new File("trustgraph_complete.csv");
+    private final File output = new File("trustgraph_test.csv");
     private FileOutputStream outputStream;
+    private Map<String, Data> userDataCache = Maps.newHashMap();
 
     private final EnrichmentService enrichmentService;
 
@@ -35,10 +38,14 @@ public class GraphFileExportService implements GraphService {
 
     @Override
     public void addTrustGraph(String truster, String trustee, BigInteger amount, BigInteger blockNumber) {
-        Data trusterDto = !enrichmentService.enrichUserAddress(truster).getData().isEmpty() ?
-                enrichmentService.enrichUserAddress(truster).getData().get(0) : Data.builder().safeAddress(truster).build();
-        Data trusteeDto = !enrichmentService.enrichUserAddress(trustee).getData().isEmpty() ?
-                enrichmentService.enrichUserAddress(trustee).getData().get(0) : Data.builder().safeAddress(trustee).build();;
+        Data trusterDto = userDataCache.containsKey(truster) ? userDataCache.get(truster) : (
+                !enrichmentService.enrichUserAddress(truster).getData().isEmpty() ?
+                enrichmentService.enrichUserAddress(truster).getData().get(0) : Data.builder().safeAddress(truster).build());
+        Data trusteeDto = userDataCache.containsKey(trustee) ? userDataCache.get(trustee) : (
+                !enrichmentService.enrichUserAddress(trustee).getData().isEmpty() ?
+                enrichmentService.enrichUserAddress(trustee).getData().get(0) : Data.builder().safeAddress(trustee).build());
+        userDataCache.put(truster, trusterDto);
+        userDataCache.put(trustee, trusteeDto);
         try {
             outputStream.write(String.join(",",
                     new String[]{
