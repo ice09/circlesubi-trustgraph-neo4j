@@ -1,11 +1,13 @@
 package tech.blockchainers.circles.trustgraph.user.api;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.web3j.crypto.Keys;
 import tech.blockchainers.circles.trustgraph.user.model.User;
@@ -25,6 +27,8 @@ class UserController {
 
 	private final UserService userService;
 	private final EnrichmentService enrichmentService;
+	@Value("${tcb.id}")
+	private String tcbId;
 
 	UserController(UserService userService, EnrichmentService enrichmentService) {
 		this.userService = userService;
@@ -37,7 +41,10 @@ class UserController {
 	}
 
 	@PostMapping(path = "/trust/{truster}/{trustee}/{amount}/{blockNumber}")
-	public ResponseEntity<String> addTrustLine(@PathVariable("truster") String truster, @PathVariable("trustee") String trustee, @PathVariable(value = "amount") Integer amount, @PathVariable(value = "blockNumber") Integer blockNumber) {
+	public ResponseEntity<String> addTrustLine(@RequestHeader("TCB-ID") String tcbId, @PathVariable("truster") String truster, @PathVariable("trustee") String trustee, @PathVariable(value = "amount") Integer amount, @PathVariable(value = "blockNumber") Integer blockNumber) {
+		if (!this.tcbId.equals(tcbId)) {
+			throw new IllegalArgumentException("Cannot retrieve registrations.");
+		}
 		String trusterAddress = Keys.toChecksumAddress(truster);
 		String trusteeAddress = Keys.toChecksumAddress(trustee);
 		Data trusterDto = !enrichmentService.enrichUserAddress(trusterAddress).getData().isEmpty() ?

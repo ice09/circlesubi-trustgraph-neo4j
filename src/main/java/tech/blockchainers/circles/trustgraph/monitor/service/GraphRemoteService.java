@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +20,8 @@ public class GraphRemoteService implements GraphService {
 
     @Value("${graph.service.url}")
     private String dbUrl;
+    @Value("${tcb.id}")
+    private String tcbId;
 
     private final RestTemplate restTemplate;
 
@@ -30,7 +33,10 @@ public class GraphRemoteService implements GraphService {
     public void addTrustGraph(String truster, String trustee, BigInteger amount, BigInteger blockNumber) {
         Map<String, ? extends Serializable> map =
                 Map.of("truster", truster, "trustee", trustee, "blockNumber", blockNumber, "amount", amount);
-        HttpEntity<String> requestEntity = restTemplate.postForEntity(dbUrl + "/trust/{truster}/{trustee}/{amount}/{blockNumber}", null, String.class, map);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("TCB-ID", tcbId);
+        HttpEntity<?> requestEntity = new HttpEntity<>(requestHeaders);
+        HttpEntity<String> responseEntity = restTemplate.postForEntity(dbUrl + "/trust/{truster}/{trustee}/{amount}/{blockNumber}", requestEntity, String.class, map);
         log.debug("Created {}", requestEntity.getBody());
     }
 }
