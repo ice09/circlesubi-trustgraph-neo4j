@@ -92,15 +92,25 @@ public class UserService {
 		return databaseSelectionProvider.getDatabaseSelection().getValue();
 	}
 
-	public void addTrustLine(String trusterAddress, String trusteeAddress, Integer blockNumber, Integer amount) {
+	public void addTrustLine(String trusterAddress, String trusterName, String trusterImgUrl, String trusteeAddress, String trusteeName, String trusteeImgUrl, Integer blockNumber, Integer amount) {
 		try (Session session = sessionFor(database())) {
 			String stmt =
-			"MERGE (u1:User {address: $truster}) "+
-			"MERGE (u2:User {address: $trustee}) "+
+			"MERGE (u1:User {address: $trusterAddr}) "+
+					"SET u1.name = $trusterName \n" +
+					"SET u1.image_url = $trusterImgUrl \n" +
+			"MERGE (u2:User {address: $trusteeAddr}) "+
+					"SET u2.name = $trusteeName \n" +
+					"SET u2.image_url = $trusteeImgUrl \n" +
 			"MERGE (u1)-[r:TRUSTS]->(u2) "+
 					"SET r.blockNumber = toInteger($blockNumber), r.amount = toFloat($amount)";
 			session.run( stmt,
-					parameters( "truster", trusterAddress, "trustee", trusteeAddress,
+					parameters(
+							"trusterAddr", trusterAddress,
+							"trusterName", trusterName,
+							"trusterImgUrl", trusterImgUrl,
+							"trusteeAddr", trusteeAddress,
+							"trusteeName", trusteeName,
+							"trusteeImgUrl", trusteeImgUrl,
 							"blockNumber", blockNumber, "amount", amount) );
 		}
 	}

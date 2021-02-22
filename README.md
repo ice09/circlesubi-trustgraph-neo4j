@@ -75,3 +75,7 @@ docker run \
     neo4j:latest
 ```
 
+### Advanced Setup
+
+Image display: https://community.neo4j.com/t/how-to-add-image-or-icon-to-nodes/10483/4
+
