@@ -1,5 +1,7 @@
 ## Run Trustgraph on Neo4j in Docker Mode
 
+* Create new folder and copy batch scripts to this folder
+* Create sub-folder `neo4j` with folders: `import`, `data`, `logs` and `plugins`
 * Unzip provided import ZIP file in root to `neo4j/import` directory
 * Run Neo4j with `start-docker-neo4j.bat`
     * (Opt.) Install [Neo4j-Desktop](https://neo4j.com/download/) to connect to Docker instance
