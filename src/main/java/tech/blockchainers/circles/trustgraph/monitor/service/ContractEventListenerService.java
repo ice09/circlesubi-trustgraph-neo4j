@@ -77,4 +77,11 @@ public class ContractEventListenerService {
         }
     }
 
+    public String getLatestBlock() {
+        return latestBlock.toString();
+    }
+
+    public String getCurrentBlock() throws IOException {
+        return httpWeb3j.ethBlockNumber().send().getBlockNumber().toString();
+    }
 }

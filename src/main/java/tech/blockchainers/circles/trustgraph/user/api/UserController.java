@@ -1,5 +1,6 @@
 package tech.blockchainers.circles.trustgraph.user.api;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.web3j.crypto.Keys;
+import tech.blockchainers.circles.trustgraph.monitor.service.ContractEventListenerService;
 import tech.blockchainers.circles.trustgraph.user.model.User;
 import tech.blockchainers.circles.trustgraph.user.service.EnrichmentService;
 import tech.blockchainers.circles.trustgraph.user.service.UserService;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +32,12 @@ class UserController {
 	private final EnrichmentService enrichmentService;
 	@Value("${tcb.id}")
 	private String tcbId;
+	private final ContractEventListenerService contractEventListenerService;
 
-	UserController(UserService userService, EnrichmentService enrichmentService) {
+	UserController(UserService userService, EnrichmentService enrichmentService, ContractEventListenerService contractEventListenerService) {
 		this.userService = userService;
 		this.enrichmentService = enrichmentService;
+		this.contractEventListenerService = contractEventListenerService;
 	}
 
 	@GetMapping("/trust/{truster}/{trustee}/{amount}")
@@ -57,9 +62,12 @@ class UserController {
 		return new ResponseEntity<>("{\"message\": \"" + trusteeAddress + "|" + trusteeAddress + "|" + amount + " created.\"}", HttpStatus.CREATED);
 	}
 
-	@GetMapping("/graph")
-	public Map<String, List<Object>> getGraph() {
-		return userService.fetchTrustGraph();
+	@GetMapping("/stats")
+	public Map<String, String> getStats() throws IOException {
+		Map<String, String> stats = Maps.newHashMap();
+		stats.put("latestBlock", contractEventListenerService.getLatestBlock());
+		stats.put("currentBlock", contractEventListenerService.getCurrentBlock());
+		return stats;
 	}
 
 }
