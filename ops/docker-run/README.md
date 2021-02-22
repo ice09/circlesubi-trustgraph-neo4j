@@ -10,4 +10,8 @@
 
 ## Call API for Trustgraph
 
+This call should give you a transitive payment path of 3 hops for paying from `trustee` to `truster`.
+
+`curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c/50" -H "accept: */*"`
+
 
