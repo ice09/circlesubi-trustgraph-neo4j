@@ -58,8 +58,9 @@ The Trustgraph service provides an API which is described at http://127.0.0.1:88
 
 The most interesting API call offered is the calculation of the shortest path (with transitive transfers) between two users:
 
-`curl -X GET "http://localtest.me:8889/trust/0x249fa3ecd95a53f742707d53688fcafbbd072f33/0x945CaC6047B1f58945ed2aafA5BaeD96A31faa4c/50" -H "accept: */*"`
+`curl -X GET "http://localtest.me:8889/trust/0x9FaA986911c4423ad9895805BEE4a566DD11120D/0xC29D7Ab348b2dA3B59eE80A8492bEDFaDf350AEF/50" -H "accept: */*"`
 
 ### Advanced Setup
 
 * Image display `image_url` as thumbnails: https://community.neo4j.com/t/how-to-add-image-or-icon-to-nodes/10483/4
+* Change Neo4j password: Change password in (external) `application.peoperties` *and* in `start-docker-neo4j.bat` or in Neo4j Desktop
