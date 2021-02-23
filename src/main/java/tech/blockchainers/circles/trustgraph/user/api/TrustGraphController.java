@@ -1,6 +1,7 @@
 package tech.blockchainers.circles.trustgraph.user.api;
 
 import com.google.common.collect.Maps;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,9 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Michael J. Simons
- */
 @RestController
 @Slf4j
-class UserController {
+class TrustGraphController {
 
 	private final UserService userService;
 	private final EnrichmentService enrichmentService;
@@ -34,18 +32,22 @@ class UserController {
 	private String tcbId;
 	private final ContractEventListenerService contractEventListenerService;
 
-	UserController(UserService userService, EnrichmentService enrichmentService, ContractEventListenerService contractEventListenerService) {
+	TrustGraphController(UserService userService, EnrichmentService enrichmentService, ContractEventListenerService contractEventListenerService) {
 		this.userService = userService;
 		this.enrichmentService = enrichmentService;
 		this.contractEventListenerService = contractEventListenerService;
 	}
 
 	@GetMapping("/trust/{truster}/{trustee}/{amount}")
+	@ApiOperation(value = "Get transtive trust from trustee to truster.",
+			notes = "To get a result, a transitive trust graph must exist from truster to trustee with at least the submitted amount.")
 	List<User> search(@PathVariable("truster") String truster, @PathVariable("trustee")  String trustee, @PathVariable("amount") BigInteger amount) {
 		return userService.findTrustGraph(Keys.toChecksumAddress(truster), Keys.toChecksumAddress(trustee), amount);
 	}
 
 	@PostMapping(path = "/trust/{truster}/{trustee}/{amount}/{blockNumber}")
+	@ApiOperation(value = "Create a trust connection between truster and trustee with amount at blocknumber. Should be used by the Monitor.",
+			notes = "Can only be used with a valid TCB-ID.")
 	public ResponseEntity<String> addTrustLine(@RequestHeader("TCB-ID") String tcbId, @PathVariable("truster") String truster, @PathVariable("trustee") String trustee, @PathVariable(value = "amount") Integer amount, @PathVariable(value = "blockNumber") Integer blockNumber) {
 		if (!this.tcbId.equals(tcbId)) {
 			throw new IllegalArgumentException("Cannot retrieve registrations.");
@@ -63,6 +65,7 @@ class UserController {
 	}
 
 	@GetMapping("/stats")
+	@ApiOperation(value = "Return latestBlock (which is currently processed) and currentBlock (of the xDai Mainnet).")
 	public Map<String, String> getStats() throws IOException {
 		Map<String, String> stats = Maps.newHashMap();
 		stats.put("latestBlock", contractEventListenerService.getLatestBlock());
