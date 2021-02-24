@@ -20,7 +20,7 @@ import java.util.Map;
 @Profile("import")
 public class GraphFileExportService implements GraphService {
 
-    private final File output = new File("trustgraph_test.csv");
+    private final File output = new File("trustgraph_transfers.csv");
     private FileOutputStream outputStream;
     private Map<String, Data> userDataCache = Maps.newHashMap();
 
@@ -30,7 +30,7 @@ public class GraphFileExportService implements GraphService {
         this.enrichmentService = enrichmentService;
         outputStream = new FileOutputStream(output);
         try {
-            outputStream.write(("blockNumber,truster,truster_name,truster_image_url,trustee,trustee_name,trustee_image_url,amount\n").getBytes(StandardCharsets.UTF_8));
+            outputStream.write(("blockNumber,sender,sender_name,sender_image_url,receiver,receiver_name,receiver_image_url,amount\n").getBytes(StandardCharsets.UTF_8));
         } catch (Exception ex) {
             // bla
         }

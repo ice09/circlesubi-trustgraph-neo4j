@@ -47,7 +47,7 @@ public class ContractEventListenerService {
             log.debug("Processing from {} to {}", index, currentBlock);
             while (currentBlock.compareTo(index) >= 0) {
                 EthFilter eventFilter = new EthFilter(DefaultBlockParameter.valueOf(index), DefaultBlockParameter.valueOf(index.add(BigInteger.valueOf(10000))), hub.getContractAddress());
-                String encodedEventSignature = EventEncoder.encode(Hub.TRUST_EVENT);
+                String encodedEventSignature = EventEncoder.encode(Hub.HUBTRANSFER_EVENT);
                 eventFilter.addSingleTopic(encodedEventSignature);
                 Request<?, EthLog> resReg = httpWeb3j.ethGetLogs(eventFilter);
                 List<EthLog.LogResult> regLogs = resReg.send().getLogs();
@@ -55,16 +55,17 @@ public class ContractEventListenerService {
                     for (int i = 0; i < regLogs.size(); i++) {
                         Log lastLogEntry = ((EthLog.LogObject) regLogs.get(i));
                         List<String> ethLogTopics = lastLogEntry.getTopics();
+                        String from = ethLogTopics.get(1).substring(26);
+                        String to = ethLogTopics.get(2).substring(26);
                         BigInteger amount = BigInteger.ZERO;
-                        String truster = ethLogTopics.get(1).substring(26);
-                        String trustee = ethLogTopics.get(2).substring(26);
-                        log.debug("event | user | canSendTo : " + ++counter + " | 0x" + trustee + " | 0x" + truster);
                         try {
-                            amount = new BigInteger(StringUtils.trimLeadingCharacter(lastLogEntry.getData().substring(2), '0'), 16);
+                            amount = new BigInteger(StringUtils.trimLeadingCharacter(lastLogEntry.getData().substring(3), '0'), 16);
                         } catch (Exception ex) {
                             log.warn("Cannot convert amount, most possible 0. Setting to default value (0).");
                         }
-                        graphService.addTrustGraph("0x" + truster, "0x" + trustee, amount, lastLogEntry.getBlockNumber());
+                        amount = amount.divide(BigInteger.valueOf(1000000000000000000l));
+                        log.debug("transfer | from | to | amount " + ++counter + " | 0x" + from + " | 0x" + to + " | " + amount);
+                        graphService.addTrustGraph("0x" + from, "0x" + to, amount, lastLogEntry.getBlockNumber());
                     }
                 } else {
                     log.debug("No events found.");
