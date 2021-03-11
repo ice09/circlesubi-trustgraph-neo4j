@@ -37,6 +37,6 @@ public class GraphRemoteService implements GraphService {
         requestHeaders.add("TCB-ID", tcbId);
         HttpEntity<?> requestEntity = new HttpEntity<>(requestHeaders);
         HttpEntity<String> responseEntity = restTemplate.postForEntity(dbUrl + "/trust/{truster}/{trustee}/{amount}/{blockNumber}", requestEntity, String.class, map);
-        log.debug("Created {}", requestEntity.getBody());
+        log.debug("Created {}", responseEntity.getBody());
     }
 }

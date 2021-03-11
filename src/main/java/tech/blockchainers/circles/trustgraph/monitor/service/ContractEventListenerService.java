@@ -43,7 +43,7 @@ public class ContractEventListenerService {
     public void addTrustFromTrustEvent() throws IOException {
         BigInteger currentBlock = httpWeb3j.ethBlockNumber().send().getBlockNumber();
         if (currentBlock.compareTo(latestBlock) > 0) {
-            BigInteger index = latestBlock.add(BigInteger.ONE);
+            BigInteger index = latestBlock;
             log.debug("Processing from {} to {}", index, currentBlock);
             while (currentBlock.compareTo(index) >= 0) {
                 EthFilter eventFilter = new EthFilter(DefaultBlockParameter.valueOf(index), DefaultBlockParameter.valueOf(index.add(BigInteger.valueOf(10000))), hub.getContractAddress());
@@ -72,7 +72,7 @@ public class ContractEventListenerService {
                 index = index.add(BigInteger.valueOf(10000));
                 log.debug("Set new index {}", index);
             }
-            log.info("Processed blocks {} to {}", latestBlock.add(BigInteger.ONE), currentBlock);
+            log.info("Processed blocks {} to {}", latestBlock, currentBlock);
             latestBlock = currentBlock;
         }
     }
